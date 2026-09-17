@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Tarefas</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Minhas Tarefas</h1>
@@ -15,7 +16,17 @@
         <option value="media" id="media">Média</option>
         <option value="baixa" id="baixa">Baixa</option>
     </select>
-    <button class="botaoAdd" id="adicionarTarefa">Adicionar</button>
+    <button class="botaoAdd" id="adicionarTarefa">Adicionar</button><br>
+    
+    <label>Filtrar:</label>
+    <select id="filtroTarefas">
+        <option value="todas">Todas</option>
+        <option value="concluidas">Concluídas</option>
+        <option value="pendentes">Pendentes</option>
+    </select>
+
+    <p id="contadorTarefas"></p>
+   
     <ul id="areaTarefas"></ul>
     
     <script src="index.js"></script>

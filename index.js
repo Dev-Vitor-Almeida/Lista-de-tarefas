@@ -1,20 +1,40 @@
 const tarefa = document.getElementById("tarefa");
 const btnAdicionar = document.getElementById("adicionarTarefa");
 const areaTarefas = document.getElementById("areaTarefas");
-const prioridade = document.getElementById("prioridade")
+const prioridade = document.getElementById("prioridade");
+const contadorTarefas = document.getElementById("contadorTarefas");
+const filtroTarefas = document.getElementById("filtroTarefas")
 
 const tarefas = []; 
 
 function mostrarTarefas(){
+    const filtro = filtroTarefas.value
+
     areaTarefas.innerHTML = ""
     
-    tarefas.forEach(function(itemtarefa){
-        const li = document.createElement("li");
-        li.textContent = itemtarefa.texto;
 
-        const prioridadeTexto = document.createElement("span");
-        prioridadeTexto.textContent = itemtarefa.prioridade
-        li.appendChild(prioridadeTexto)
+    tarefas.forEach(function(itemtarefa){
+        if(filtro === "concluidas" && itemtarefa.concluida === false){
+            return;
+        }
+        
+        if(filtro === "pendentes" && itemtarefa.concluida === true){
+            return;
+        }
+
+        const textoTarefa = document.createElement("span")
+        
+        const li = document.createElement("li");
+        
+        textoTarefa.textContent = itemtarefa.texto;
+        li.appendChild(textoTarefa)
+
+        //const prioridadeTexto = document.createElement("span");
+        //prioridadeTexto.textContent = itemtarefa.prioridade
+        //li.appendChild(prioridadeTexto)
+
+        //prioridadeTexto.classList.add(itemtarefa.prioridade);
+        li.classList.add(itemtarefa.prioridade)
 
         const botaoExcluir = document.createElement("button");
         botaoExcluir.textContent = "Remover"
@@ -36,6 +56,46 @@ function mostrarTarefas(){
             
         })  
 
+        const botaoEditar = document.createElement("button");
+        botaoEditar.textContent = "Editar";
+
+        li.appendChild(botaoEditar);
+
+        const inputEditar = document.createElement("input")
+        inputEditar.value = itemtarefa.texto
+
+        botaoEditar.addEventListener("click",function(){
+            li.appendChild(inputEditar)
+            textoTarefa.style.display = "none"
+            itemtarefa.texto = inputEditar.value
+        })
+
+        const botaoSalvar = document.createElement("button");
+        botaoSalvar.textContent = "Salvar"
+
+        li.appendChild(botaoSalvar)
+
+        botaoSalvar.addEventListener("click", function(){
+            itemtarefa.texto = inputEditar.value
+            
+            const stringTarefas = JSON.stringify(tarefas);
+            localStorage.setItem("tarefas", stringTarefas)
+
+            mostrarTarefas()
+        })
+
+        function contarTarefas(){
+        let concluidas = 0;
+        
+         tarefas.forEach(function(itemtarefa){
+         if(itemtarefa.concluida === true){
+            concluidas++
+            }
+        })
+            return concluidas
+        } 
+
+        contadorTarefas.textContent = `Concluidas: ${contarTarefas()} | Pendentes: ${tarefas.length - contarTarefas()}`
 
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox"
@@ -57,22 +117,20 @@ function mostrarTarefas(){
             
             if(itemtarefa.concluida === true){
                 li.style.textDecoration = "line-through"
+                li.style.opacity = "0.5";
             }else{
-                li.style.textDecoration = "none"
+                li.style.textDecoration = "none";
+                li.style.opacity = "1"
             }
 
+            contadorTarefas.textContent = `Concluidas: ${contarTarefas()} | Pendentes: ${tarefas.length - contarTarefas()}`
         })
 
     })
 }
 
-function adicionarTarefa(){
-    console.log("ENTREI NA FUNÇÂO")
-    
+function adicionarTarefa(){    
     const tarefaDigitada = tarefa.value;
-
-    console.log("Tarefa", tarefaDigitada)
-    console.log("Prioridade", prioridade.value)
     
     if(tarefaDigitada.trim() !== "" && prioridade.value !== ""){
         const tarefaNova = {
@@ -82,6 +140,9 @@ function adicionarTarefa(){
         }    
         tarefas.push(tarefaNova) 
         mostrarTarefas()
+
+        const stringTarefas = JSON.stringify(tarefas)
+        localStorage.setItem("tarefas", stringTarefas)
         
     }else if(prioridade.value === ""){
         alert("Prioridade não selecionada")
@@ -91,9 +152,7 @@ function adicionarTarefa(){
     
     tarefa.value = "";
     prioridade.value = ""; 
-
-    const stringTarefas = JSON.stringify(tarefas)
-        localStorage.setItem("tarefas", stringTarefas)
+    prioridade.style.backgroundColor = "";
 
 }        
 
@@ -121,6 +180,20 @@ btnAdicionar.addEventListener("click", function(){
    adicionarTarefa()
 })   
 
+prioridade.addEventListener("change", function(){
+    if(prioridade.value === "alta"){
+        prioridade.style.backgroundColor = "red"
+    }else if(prioridade.value ==="media"){
+        prioridade.style.backgroundColor = "yellow"
+    }else{
+        prioridade.style.backgroundColor = "green"
+    }
+});
+
+filtroTarefas.addEventListener("change", function(){
+    const filtro = filtroTarefas.value;
+    mostrarTarefas()
+})  
 
 
 
