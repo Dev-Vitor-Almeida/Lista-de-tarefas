@@ -4,8 +4,10 @@ const areaTarefas = document.getElementById("areaTarefas");
 const prioridade = document.getElementById("prioridade");
 const contadorTarefas = document.getElementById("contadorTarefas");
 const filtroTarefas = document.getElementById("filtroTarefas")
+const btnLimparConcluidas = document.getElementById("btnConcluidas")
+const bntLimparTodas = document.getElementById("btn-limparTodas");
 
-const tarefas = []; 
+let tarefas = []; 
 
 function mostrarTarefas(){
     const filtro = filtroTarefas.value
@@ -13,7 +15,7 @@ function mostrarTarefas(){
     areaTarefas.innerHTML = ""
     
 
-    tarefas.forEach(function(itemtarefa){
+    tarefas.forEach(function(itemtarefa, indice){
         if(filtro === "concluidas" && itemtarefa.concluida === false){
             return;
         }
@@ -37,23 +39,16 @@ function mostrarTarefas(){
         li.classList.add(itemtarefa.prioridade)
 
         const botaoExcluir = document.createElement("button");
-        botaoExcluir.textContent = "Remover"
+        botaoExcluir.textContent = "Excluir"
 
         li.appendChild(botaoExcluir)
 
         areaTarefas.appendChild(li)
 
         botaoExcluir.addEventListener("click", function(){
-            const indice = tarefas.findIndex(function(tarefa){
-                return tarefa.texto === itemtarefa.texto
-            })
-
             tarefas.splice(indice, 1)
             mostrarTarefas()
-
-            const stringTarefas = JSON.stringify(tarefas)
-            localStorage.setItem("tarefas", stringTarefas)
-            
+            salvarTarefas()
         })  
 
         const botaoEditar = document.createElement("button");
@@ -67,20 +62,34 @@ function mostrarTarefas(){
         botaoEditar.addEventListener("click",function(){
             li.appendChild(inputEditar)
             textoTarefa.style.display = "none"
-            itemtarefa.texto = inputEditar.value
+            botaoCancelar.style.display = "inline";
+            botaoSalvar.style.display = "inline";
+            botaoEditar.style.display = "none"
+        });
+
+        const botaoCancelar = document.createElement("button")
+        botaoCancelar.textContent = "Cancelar"
+        li.appendChild(botaoCancelar)
+        botaoCancelar.style.display = "none"
+
+        botaoCancelar.addEventListener("click",function(){
+            fecharEdicao(inputEditar, textoTarefa, botaoCancelar, botaoSalvar);
+            botaoEditar.style.display = "inline"
         })
 
         const botaoSalvar = document.createElement("button");
         botaoSalvar.textContent = "Salvar"
-
         li.appendChild(botaoSalvar)
+        botaoSalvar.style.display = "none"
 
         botaoSalvar.addEventListener("click", function(){
+            if(inputEditar.value.trim() === ""){
+                alert("Digite uma tarefa")
+                return
+            }
             itemtarefa.texto = inputEditar.value
-            
-            const stringTarefas = JSON.stringify(tarefas);
-            localStorage.setItem("tarefas", stringTarefas)
 
+            salvarTarefas()
             mostrarTarefas()
         })
 
@@ -112,8 +121,7 @@ function mostrarTarefas(){
         checkbox.addEventListener("change",function(){
             itemtarefa.concluida = checkbox.checked
 
-            const stringTarefas = JSON.stringify(tarefas)
-            localStorage.setItem("tarefas", stringTarefas)
+            salvarTarefas()
             
             if(itemtarefa.concluida === true){
                 li.style.textDecoration = "line-through"
@@ -127,6 +135,11 @@ function mostrarTarefas(){
         })
 
     })
+}
+
+function salvarTarefas(){
+    const stringTarefas = JSON.stringify(tarefas)
+    localStorage.setItem("tarefas", stringTarefas)
 }
 
 function adicionarTarefa(){    
@@ -156,6 +169,34 @@ function adicionarTarefa(){
 
 }        
 
+function limparTarefasConcluidas(){
+    tarefas = tarefas.filter(function(itemtarefa){
+        return itemtarefa.concluida === false
+    })
+    mostrarTarefas()
+    salvarTarefas()
+}
+
+btnLimparConcluidas.addEventListener("click", function(){
+    limparTarefasConcluidas()
+})
+
+bntLimparTodas.addEventListener("click", function(){
+    limparTodasTarefas()
+})
+
+function fecharEdicao(inputEditar, textoTarefa,botaoCancelar,botaoSalvar){
+    inputEditar.remove();
+    textoTarefa.style.display = "inline";
+    botaoCancelar.style.display = "none";
+    botaoSalvar.style.display = "none";
+}
+
+function limparTodasTarefas(){
+    tarefas.splice(0, tarefas.length);
+    mostrarTarefas();
+    salvarTarefas()
+}
 
 const retornoTarefas = localStorage.getItem("tarefas")        
         if(retornoTarefas !== null){
