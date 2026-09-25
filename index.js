@@ -5,7 +5,7 @@ const prioridade = document.getElementById("prioridade");
 const contadorTarefas = document.getElementById("contadorTarefas");
 const filtroTarefas = document.getElementById("filtroTarefas")
 const btnLimparConcluidas = document.getElementById("btnConcluidas")
-const bntLimparTodas = document.getElementById("btn-limparTodas");
+const btnLimparTodas = document.getElementById("btn-limparTodas");
 
 let tarefas = []; 
 
@@ -46,7 +46,10 @@ function mostrarTarefas(){
         areaTarefas.appendChild(li)
 
         botaoExcluir.addEventListener("click", function(){
-            tarefas.splice(indice, 1)
+            if(confirm("Deseja realmente excluir essa tarefa?")){
+                tarefas.splice(indice, 1)
+            }
+            
             mostrarTarefas()
             salvarTarefas()
         })  
@@ -60,21 +63,43 @@ function mostrarTarefas(){
         inputEditar.value = itemtarefa.texto
 
         botaoEditar.addEventListener("click",function(){
+            edicaoClique()
+        });
+            
+        textoTarefa.addEventListener("dblclick", function(){
+            edicaoClique()
+        })
+
+        function edicaoClique(){
             li.appendChild(inputEditar)
+            inputEditar.focus()
             textoTarefa.style.display = "none"
             botaoCancelar.style.display = "inline";
             botaoSalvar.style.display = "inline";
             botaoEditar.style.display = "none"
-        });
+            selectEditar.style.display = "inline"
+        }
 
         const botaoCancelar = document.createElement("button")
         botaoCancelar.textContent = "Cancelar"
         li.appendChild(botaoCancelar)
         botaoCancelar.style.display = "none"
 
-        botaoCancelar.addEventListener("click",function(){
-            fecharEdicao(inputEditar, textoTarefa, botaoCancelar, botaoSalvar);
+
+        function cancelarEdicao(){
+            fecharEdicao(inputEditar, textoTarefa, botaoCancelar, botaoSalvar, selectEditar);
             botaoEditar.style.display = "inline"
+        }
+
+        botaoCancelar.addEventListener("click",function(){
+            cancelarEdicao()
+        })
+
+        inputEditar.addEventListener("keydown", function(evento){
+            if(evento.key === "Escape"){
+                cancelarEdicao()
+            }
+            
         })
 
         const botaoSalvar = document.createElement("button");
@@ -83,16 +108,73 @@ function mostrarTarefas(){
         botaoSalvar.style.display = "none"
 
         botaoSalvar.addEventListener("click", function(){
+            salvarEdicao()
+        })
+
+
+         function salvarEdicao(){
             if(inputEditar.value.trim() === ""){
                 alert("Digite uma tarefa")
                 return
             }
+
+            const indiceEncontrado = tarefas.findIndex(function(itemtarefa){
+              return itemtarefa.texto.trim().toLowerCase() === inputEditar.value.trim().toLowerCase()
+            })    
+
+            if(indiceEncontrado !== -1 && indiceEncontrado != indice){
+                alert("Tarefa já existente!")
+                return
+            }
             itemtarefa.texto = inputEditar.value
+            itemtarefa.prioridade = selectEditar.value
 
             salvarTarefas()
             mostrarTarefas()
-        })
+        }
 
+        inputEditar.addEventListener("keydown", function(evento){
+            if(evento.key === "Enter"){
+            salvarEdicao()
+            }
+        }) 
+
+        const selectEditar = document.createElement("select");
+        const opcaoAlta = document.createElement("option");
+        opcaoAlta.value = "alta"
+        opcaoAlta.textContent = "Alta"
+
+        const opcaoMedia = document.createElement("option");
+        opcaoMedia.value = "media"
+        opcaoMedia.textContent = "Média"
+
+        const opcaoBaixa = document.createElement("option");
+        opcaoBaixa.value = "baixa"
+        opcaoBaixa.textContent = "Baixa"
+
+        selectEditar.appendChild(opcaoAlta)
+        selectEditar.appendChild(opcaoMedia)
+        selectEditar.appendChild(opcaoBaixa)
+
+        li.appendChild(selectEditar)
+
+        selectEditar.style.display = "none"
+        selectEditar.value = itemtarefa.prioridade
+
+        selectEditar.addEventListener("change", function(){
+        if(selectEditar.value === "alta"){
+        selectEditar.style.backgroundColor = "red"
+        }else if(selectEditar.value ==="media"){
+        selectEditar.style.backgroundColor = "yellow"
+        }else{
+        selectEditar.style.backgroundColor = "green"
+        }
+        });
+
+       
+
+        
+        
         function contarTarefas(){
         let concluidas = 0;
         
@@ -104,7 +186,9 @@ function mostrarTarefas(){
             return concluidas
         } 
 
-        contadorTarefas.textContent = `Concluidas: ${contarTarefas()} | Pendentes: ${tarefas.length - contarTarefas()}`
+        let tarefasConcluidas = contarTarefas()
+
+        contadorTarefas.textContent = `Concluidas: ${tarefasConcluidas} | Pendentes: ${tarefas.length - tarefasConcluidas}`
 
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox"
@@ -114,8 +198,10 @@ function mostrarTarefas(){
 
             if(itemtarefa.concluida === true){
                 li.style.textDecoration = "line-through"
+                li.style.opacity = "0.5"
             }else{
                 li.style.textDecoration = "none"
+                li.style.opacity = "1"
             }
 
         checkbox.addEventListener("change",function(){
@@ -146,12 +232,22 @@ function adicionarTarefa(){
     const tarefaDigitada = tarefa.value;
     
     if(tarefaDigitada.trim() !== "" && prioridade.value !== ""){
+        
         const tarefaNova = {
             texto: tarefaDigitada,
             concluida: false,
             prioridade: prioridade.value
         }    
-        tarefas.push(tarefaNova) 
+
+        const indice = tarefas.findIndex(function(itemtarefa){
+            return itemtarefa.texto.trim().toLowerCase() === tarefaDigitada.trim().toLowerCase()
+        })
+
+        if(indice === -1){
+            tarefas.push(tarefaNova)
+        }else{
+            alert("Tarefa já existente!")
+        }
         mostrarTarefas()
 
         const stringTarefas = JSON.stringify(tarefas)
@@ -164,36 +260,55 @@ function adicionarTarefa(){
     }
     
     tarefa.value = "";
+    tarefa.focus()
     prioridade.value = ""; 
     prioridade.style.backgroundColor = "";
-
 }        
 
 function limparTarefasConcluidas(){
-    tarefas = tarefas.filter(function(itemtarefa){
+    const existeConcluida = tarefas.some(function(itemtarefa){
+    return itemtarefa.concluida === true
+    })
+    
+    
+    if (existeConcluida ===false) {
+    alert("Não há tarefas concluídas para limpar")
+    return
+    }
+    
+    if(confirm("Deseja realmente limpar todas as tarefas concluídas?")){
+        tarefas = tarefas.filter(function(itemtarefa){
         return itemtarefa.concluida === false
     })
+    }
+    
+    
     mostrarTarefas()
     salvarTarefas()
 }
+
+
 
 btnLimparConcluidas.addEventListener("click", function(){
     limparTarefasConcluidas()
 })
 
-bntLimparTodas.addEventListener("click", function(){
+btnLimparTodas.addEventListener("click", function(){
     limparTodasTarefas()
 })
 
-function fecharEdicao(inputEditar, textoTarefa,botaoCancelar,botaoSalvar){
+function fecharEdicao(inputEditar, textoTarefa,botaoCancelar,botaoSalvar, selectEditar){
     inputEditar.remove();
     textoTarefa.style.display = "inline";
     botaoCancelar.style.display = "none";
     botaoSalvar.style.display = "none";
+    selectEditar.style.display = "none"
 }
 
 function limparTodasTarefas(){
-    tarefas.splice(0, tarefas.length);
+    if(confirm("Deseja realmente limpar todas as tarefas?")){
+        tarefas.splice(0, tarefas.length);
+    }
     mostrarTarefas();
     salvarTarefas()
 }
@@ -235,6 +350,4 @@ filtroTarefas.addEventListener("change", function(){
     const filtro = filtroTarefas.value;
     mostrarTarefas()
 })  
-
-
 
