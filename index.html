@@ -9,26 +9,32 @@
 <body>
     <h1>Minhas Tarefas</h1>
 
+<div class="entradaTarefa">
     <input type="text" id="tarefa" placeholder="Digite uma tarefa">
+
     <select id="prioridade">
         <option value="" selected disabled>Prioridade</option>
         <option value="alta" id="alta">Alta</option>
         <option value="media" id="media">Média</option>
         <option value="baixa" id="baixa">Baixa</option>
     </select>
+
     <button class="botaoAdd" id="adicionarTarefa">Adicionar</button>
 
     <button id="btnConcluidas">Limpar concluídas</button>
+
+    <button id="btn-limparTodas">Limpar Todas</button>
+</div>    
     
-    <button id="btn-limparTodas">Limpar Todas</button><br>
-    
+<div class="areaFiltro">
     <label>Filtrar:</label>
+
     <select id="filtroTarefas">
         <option value="todas">Todas</option>
         <option value="concluidas">Concluídas</option>
         <option value="pendentes">Pendentes</option>
     </select>
-
+</div>
     <p id="contadorTarefas"></p>
    
     <ul id="areaTarefas"></ul>

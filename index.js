@@ -13,7 +13,13 @@ function mostrarTarefas(){
     const filtro = filtroTarefas.value
 
     areaTarefas.innerHTML = ""
+    let tarefasExibidas = 0;
     
+    if(tarefas.length === 0){
+        const mensagem = document.createElement("li");
+         mensagem.textContent = "Nenhuma tarefa cadastrada";
+         areaTarefas.appendChild(mensagem);
+    };
 
     tarefas.forEach(function(itemtarefa, indice){
         if(filtro === "concluidas" && itemtarefa.concluida === false){
@@ -23,6 +29,8 @@ function mostrarTarefas(){
         if(filtro === "pendentes" && itemtarefa.concluida === true){
             return;
         }
+
+        tarefasExibidas++
 
         const textoTarefa = document.createElement("span")
         
@@ -40,6 +48,7 @@ function mostrarTarefas(){
 
         const botaoExcluir = document.createElement("button");
         botaoExcluir.textContent = "Excluir"
+        botaoExcluir.classList.add("btnExcluir")
 
         li.appendChild(botaoExcluir)
 
@@ -56,10 +65,12 @@ function mostrarTarefas(){
 
         const botaoEditar = document.createElement("button");
         botaoEditar.textContent = "Editar";
+        botaoEditar.classList.add("btnEditar")
 
         li.appendChild(botaoEditar);
 
         const inputEditar = document.createElement("input")
+        inputEditar.classList.add("inputEditar");
         inputEditar.value = itemtarefa.texto
 
         botaoEditar.addEventListener("click",function(){
@@ -84,6 +95,7 @@ function mostrarTarefas(){
         botaoCancelar.textContent = "Cancelar"
         li.appendChild(botaoCancelar)
         botaoCancelar.style.display = "none"
+        botaoCancelar.classList.add("botaoCancelar")
 
 
         function cancelarEdicao(){
@@ -106,6 +118,7 @@ function mostrarTarefas(){
         botaoSalvar.textContent = "Salvar"
         li.appendChild(botaoSalvar)
         botaoSalvar.style.display = "none"
+        botaoSalvar.classList.add("botaoSalvar")
 
         botaoSalvar.addEventListener("click", function(){
             salvarEdicao()
@@ -143,6 +156,7 @@ function mostrarTarefas(){
         const opcaoAlta = document.createElement("option");
         opcaoAlta.value = "alta"
         opcaoAlta.textContent = "Alta"
+        selectEditar.classList.add("prioridadeEdicao");
 
         const opcaoMedia = document.createElement("option");
         opcaoMedia.value = "media"
@@ -170,9 +184,6 @@ function mostrarTarefas(){
         selectEditar.style.backgroundColor = "green"
         }
         });
-
-       
-
         
         
         function contarTarefas(){
@@ -221,7 +232,16 @@ function mostrarTarefas(){
         })
 
     })
+
+    if (tarefas.length > 0 && tarefasExibidas === 0) {
+    const mensagem = document.createElement("li");
+    mensagem.textContent = "Nenhuma tarefa encontrada";
+    areaTarefas.appendChild(mensagem);
+    }
+
 }
+
+
 
 function salvarTarefas(){
     const stringTarefas = JSON.stringify(tarefas)
@@ -249,9 +269,7 @@ function adicionarTarefa(){
             alert("Tarefa já existente!")
         }
         mostrarTarefas()
-
-        const stringTarefas = JSON.stringify(tarefas)
-        localStorage.setItem("tarefas", stringTarefas)
+        salvarTarefas()
         
     }else if(prioridade.value === ""){
         alert("Prioridade não selecionada")
@@ -320,9 +338,9 @@ const retornoTarefas = localStorage.getItem("tarefas")
             objetoTarefa.forEach(function(itemtarefa){
             tarefas.push(itemtarefa)
             })
-
-            mostrarTarefas()
         }
+
+        mostrarTarefas()
 
 
 tarefa.addEventListener("keydown", function(evento){
@@ -347,7 +365,5 @@ prioridade.addEventListener("change", function(){
 });
 
 filtroTarefas.addEventListener("change", function(){
-    const filtro = filtroTarefas.value;
     mostrarTarefas()
 })  
-

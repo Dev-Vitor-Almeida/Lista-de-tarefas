@@ -1,3 +1,57 @@
+body{
+    font-family: Arial, sans-serif;
+    background-color: #111827;
+    color: #f9fafb;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+#tarefa{
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #1f2937;
+    color: white;
+    border: 1px solid #4b5563; 
+    flex: 1;
+    min-width: 0;
+    box-sizing: border-box;  
+}
+
+#tarefa:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+#tarefa::placeholder {
+    color: #9ca3af;
+}
+
+#prioridade{
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #1f2937;
+    color: white;
+    border: 1px solid #4b5563;
+    cursor: pointer;
+}
+
+#prioridade:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
 .alta {
     border-left-color: red;
 }
@@ -12,13 +66,196 @@
 
 li {
     margin-bottom: 10px;
-    padding: 3px;
+    padding: 8px;
     border-left: 8px solid;
     border-radius: 8px;
     list-style: none;
+    background-color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+li button {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+.btnExcluir {
+    margin-left: auto;
+    background-color: #dc2626;
+}
+
+.btnEditar {
+    background-color: #2563eb;
+}
+
+.btnExcluir:hover {
+    background-color: #b91c1c;
+}
+
+.btnEditar:hover {
+    background-color: #1d4ed8;
 }
 
 ul {
     margin-left: 0;
     padding-left: 0;
+}
+
+.entradaTarefa {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#btnConcluidas{
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #374151;
+    color: white;
+    white-space: nowrap;
+}
+
+.botaoAdd{
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    color: white;
+    background-color: #2563eb;
+}
+
+.botaoAdd:hover{
+    background-color: #333;
+    color: white;
+}
+
+#btnConcluidas:hover{
+    background-color: #4b5563;
+}
+
+#btn-limparTodas {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #dc2626;
+    color: white;
+    white-space: nowrap;
+}
+
+#btn-limparTodas:hover{
+    background-color: #b91c1c;
+}
+
+#filtroTarefas {
+    padding: 8px 12px;
+    border: 1px solid #4b5563;
+    border-radius: 6px;
+    background-color: #1f2937;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    margin: 0;
+}
+
+#filtroTarefas:focus{
+    outline: none;
+    border-color: #2563eb;
+}
+
+.areaFiltro {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+#contadorTarefas {
+    margin: 5px 0 15px;
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+label {
+    color: #d1d5db;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.botaoSalvar{
+    padding: 6px 10px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    background-color: rgb(5, 174, 5);
+}
+
+.botaoSalvar:hover{
+    background-color: rgb(9, 130, 9);
+}   
+
+.botaoCancelar {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    background-color: #6b7280;
+}
+
+.botaoCancelar:hover {
+    background-color: #4b5563;
+}
+
+.prioridadeEdicao {
+    padding: 6px 10px;
+    border: 1px solid #4b5563;
+    border-radius: 5px;
+    background-color: #1f2937;
+    color: white;
+    cursor: pointer;
+}
+
+.prioridadeEdicao:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+.inputEditar {
+    padding: 6px 10px;
+    border: 1px solid #4b5563;
+    border-radius: 5px;
+    background-color: #1f2937;
+    color: white;
+    outline: none;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.inputEditar:focus {
+    border-color: #2563eb;
+}
+
+@media (max-width: 600px) {
+    .entradaTarefa {
+        flex-wrap: wrap;
+    }
+
+    #tarefa {
+        width: 100%;
+        flex: none;
+    }
 }
